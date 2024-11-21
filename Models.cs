@@ -1,9 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text.RegularExpressions;
 
-namespace Meine_Ki.Models
+namespace Meine_Ki
 {
     public class ChatMessage
     {
@@ -14,20 +12,7 @@ namespace Meine_Ki.Models
 
     public class SearchResult
     {
-        public string Title { get; set; }
-        public string Url { get; set; }
-        public string Summary { get; set; }
-        public SearchResultDetails Details { get; set; }
-    }
-
-    public class SearchResultDetails
-    {
-        public string Statistics { get; set; }
-        public string Dates { get; set; }
-        public string References { get; set; }
-
-        public bool HasStatistics => !string.IsNullOrEmpty(Statistics);
-        public bool HasDates => !string.IsNullOrEmpty(Dates);
-        public bool HasReferences => !string.IsNullOrEmpty(References);
+        public string Content { get; set; }
+        public List<string> Sources { get; set; } = new List<string>();
     }
 }

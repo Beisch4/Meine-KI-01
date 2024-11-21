@@ -1,69 +1,59 @@
 ﻿using System;
 using System.Collections.ObjectModel;
-using System.Text;
+using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Controls;
 using System.Windows.Input;
-using WpfChatbot;
 
 namespace Meine_Ki
 {
+    /// <summary>
+    /// Interaction logic for MainWindow.xaml
+    /// </summary>
     public partial class MainWindow : Window
     {
-        private ChatbotBrain chatbot;
-        private WebSearchService webSearch;
+        private readonly GeminiSearchService _searchService;
         private ObservableCollection<ChatMessage> chatMessages;
 
         public MainWindow()
         {
             InitializeComponent();
-            chatbot = new ChatbotBrain();
-            webSearch = new WebSearchService();
+            _searchService = new GeminiSearchService();
             chatMessages = new ObservableCollection<ChatMessage>();
             chatDisplay.ItemsSource = chatMessages;
-
-            // Füge Event-Handler hinzu
-            userInput.KeyDown += UserInput_KeyDown;
+            AddMessage("Willkommen! Ich bin Ihr KI-Assistent mit Google Gemini. Wie kann ich Ihnen helfen?", false);
         }
 
         private async void SendButton_Click(object sender, RoutedEventArgs e)
         {
-            if (string.IsNullOrWhiteSpace(userInput.Text)) return;
+            await ProcessUserInput();
+        }
 
-            var message = userInput.Text;
-            userInput.Clear();
+        private async void InputTextBox_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.Key == Key.Enter)
+            {
+                await ProcessUserInput();
+            }
+        }
 
-            AddMessage(message, true);
+        private async Task ProcessUserInput()
+        {
+            if (string.IsNullOrWhiteSpace(inputTextBox.Text)) return;
+
+            var query = inputTextBox.Text;
+            inputTextBox.Clear();
+            AddMessage(query, true);
             loadingIndicator.Visibility = Visibility.Visible;
 
             try
             {
-                var results = await webSearch.SearchAndSummarize(message);
-                if (results.Count > 0)
-                {
-                    var summary = new StringBuilder();
-                    summary.AppendLine("📚 Zusammenfassung der Suchergebnisse:\n");
-
-                    foreach (var result in results)
-                    {
-                        summary.AppendLine($"• {result.Summary}");
-                    }
-
-                    summary.AppendLine("\n🔍 Quellen:");
-                    foreach (var result in results)
-                    {
-                        summary.AppendLine($"- {result.Title}: {result.Url}");
-                    }
-
-                    AddMessage(summary.ToString(), false);
-                }
-                else
-                {
-                    AddMessage("Leider konnte ich keine relevanten Informationen finden.", false);
-                }
+                var result = await _searchService.GetResponseAsync(query);
+                AddMessage(result.Content, false);
             }
             catch (Exception ex)
             {
-                AddMessage($"Es tut mir leid, es ist ein Fehler aufgetreten: {ex.Message}", false);
+                AddMessage($"Entschuldigung, es ist ein Fehler aufgetreten: {ex.Message}", false);
             }
             finally
             {
@@ -71,12 +61,10 @@ namespace Meine_Ki
             }
         }
 
-        private void UserInput_KeyDown(object sender, KeyEventArgs e)
+        private void NewChat_Click(object sender, RoutedEventArgs e)
         {
-            if (e.Key == Key.Enter)
-            {
-                SendButton_Click(sender, null);
-            }
+            chatMessages.Clear();
+            AddMessage("Wie kann ich Ihnen helfen?", false);
         }
 
         private void AddMessage(string message, bool isUser)
@@ -88,7 +76,7 @@ namespace Meine_Ki
                 Timestamp = DateTime.Now
             };
             chatMessages.Add(chatMessage);
-            chatScrollViewer.ScrollToBottom();
+            scrollViewer?.ScrollToBottom();
         }
     }
 }
