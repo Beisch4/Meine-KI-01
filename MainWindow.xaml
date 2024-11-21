@@ -2,7 +2,7 @@
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:local="clr-namespace:Meine_Ki"
-        Title="GeminiAI" Height="700" Width="1000"
+        Title="BeischAI" Height="700" Width="1000"
         Background="#1E1E1E"
         WindowStartupLocation="CenterScreen">
 
@@ -10,9 +10,8 @@
         <local:MessageBackgroundConverter x:Key="MessageBackgroundConverter"/>
         <local:MessageAlignmentConverter x:Key="MessageAlignmentConverter"/>
 
-        <!-- Button Style -->
         <Style x:Key="ModernButton" TargetType="Button">
-            <Setter Property="Background" Value="#7B68EE"/>
+            <Setter Property="Background" Value="#E3008C"/>
             <Setter Property="Foreground" Value="White"/>
             <Setter Property="Padding" Value="20,10"/>
             <Setter Property="BorderThickness" Value="0"/>
@@ -30,7 +29,7 @@
             </Setter>
             <Style.Triggers>
                 <Trigger Property="IsMouseOver" Value="True">
-                    <Setter Property="Background" Value="#9370DB"/>
+                    <Setter Property="Background" Value="#E3008C"/>
                 </Trigger>
             </Style.Triggers>
         </Style>
@@ -53,22 +52,43 @@
                     <ColumnDefinition Width="Auto"/>
                 </Grid.ColumnDefinitions>
 
-                <StackPanel>
-                    <TextBlock Text="GeminiAI"
-                             FontSize="28"
-                             FontWeight="Light"
-                             Foreground="#7B68EE"/>
-                    <TextBlock Text="Powered by Google Gemini"
-                             Margin="0,5,0,0"
-                             Foreground="White"
-                             Opacity="0.7"/>
+                <StackPanel Orientation="Horizontal">
+                    <!-- Brain Logo -->
+                    <Canvas Width="40" Height="40" Margin="0,0,15,0">
+                        <Path Data="M20,5 C25,5 30,10 30,15 C30,20 25,25 20,25 C15,25 10,20 10,15 C10,10 15,5 20,5 Z
+                              M15,15 C17,17 23,17 25,15
+                              M20,10 L20,20
+                              M17,12 L23,12
+                              M17,18 L23,18"
+                              Stroke="#E3008C"
+                              StrokeThickness="2"
+                              Fill="Transparent">
+                            <Path.Effect>
+                                <DropShadowEffect Color="#E3008C" 
+                                                BlurRadius="10" 
+                                                ShadowDepth="0" 
+                                                Opacity="0.5"/>
+                            </Path.Effect>
+                        </Path>
+                    </Canvas>
+
+                    <StackPanel>
+                        <TextBlock Text="BeischAI"
+                                 FontSize="28"
+                                 FontWeight="Light"
+                                 Foreground="#E3008C"/>
+                        <TextBlock Text=""
+                                 Margin="0,5,0,0"
+                                 Foreground="White"
+                                 Opacity="0.7"/>
+                    </StackPanel>
                 </StackPanel>
 
                 <Button Grid.Column="1"
                         Content="Neuer Chat"
                         Style="{StaticResource ModernButton}"
                         Click="NewChat_Click"
-                        Margin="10,0,0,0"/>
+                        Margin="10,0,0,0" Height="58" VerticalAlignment="Bottom"/>
             </Grid>
         </Border>
 
@@ -77,8 +97,10 @@
                       Grid.Row="1" 
                       Margin="20,10"
                       VerticalScrollBarVisibility="Auto">
-            <ItemsControl x:Name="chatDisplay">
-                <ItemsControl.ItemTemplate>
+            <ListBox x:Name="messagesList"
+                     BorderThickness="0"
+                     SelectionMode="Single" SelectionChanged="messagesList_SelectionChanged" Background="#FF252525">
+                <ListBox.ItemTemplate>
                     <DataTemplate>
                         <Border Margin="8"
                                 Padding="20,15"
@@ -98,8 +120,22 @@
                             </StackPanel>
                         </Border>
                     </DataTemplate>
-                </ItemsControl.ItemTemplate>
-            </ItemsControl>
+                </ListBox.ItemTemplate>
+                <ListBox.ItemContainerStyle>
+                    <Style TargetType="ListBoxItem">
+                        <Setter Property="Background" Value="Transparent"/>
+                        <Setter Property="BorderThickness" Value="0"/>
+                        <Setter Property="Padding" Value="0"/>
+                        <Setter Property="Template">
+                            <Setter.Value>
+                                <ControlTemplate TargetType="ListBoxItem">
+                                    <ContentPresenter/>
+                                </ControlTemplate>
+                            </Setter.Value>
+                        </Setter>
+                    </Style>
+                </ListBox.ItemContainerStyle>
+            </ListBox>
         </ScrollViewer>
 
         <!-- Input Area -->
@@ -142,7 +178,7 @@
                 <ProgressBar IsIndeterminate="True"
                             Width="100"
                             Height="2"
-                            Foreground="#7B68EE"/>
+                            Foreground="#E3008C"/>
                 <TextBlock Text="Denke nach..."
                          Margin="0,10,0,0"
                          Foreground="White"/>

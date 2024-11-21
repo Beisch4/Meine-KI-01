@@ -2,14 +2,10 @@
 using System.Collections.ObjectModel;
 using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Controls;
 using System.Windows.Input;
 
 namespace Meine_Ki
 {
-    /// <summary>
-    /// Interaction logic for MainWindow.xaml
-    /// </summary>
     public partial class MainWindow : Window
     {
         private readonly GeminiSearchService _searchService;
@@ -20,8 +16,8 @@ namespace Meine_Ki
             InitializeComponent();
             _searchService = new GeminiSearchService();
             chatMessages = new ObservableCollection<ChatMessage>();
-            chatDisplay.ItemsSource = chatMessages;
-            AddMessage("Willkommen! Ich bin Ihr KI-Assistent mit Google Gemini. Wie kann ich Ihnen helfen?", false);
+            messagesList.ItemsSource = chatMessages;
+            AddMessage("Willkommen bei BeischAI! Wie kann ich Ihnen helfen?", false);
         }
 
         private async void SendButton_Click(object sender, RoutedEventArgs e)
@@ -77,6 +73,12 @@ namespace Meine_Ki
             };
             chatMessages.Add(chatMessage);
             scrollViewer?.ScrollToBottom();
+            messagesList.SelectedIndex = chatMessages.Count - 1;
+        }
+
+        private void messagesList_SelectionChanged(object sender, System.Windows.Controls.SelectionChangedEventArgs e)
+        {
+
         }
     }
 }

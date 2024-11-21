@@ -62,7 +62,7 @@ namespace Meine_Ki
                     return new SearchResult
                     {
                         Content = FormatResponse(answer),
-                        Sources = new List<string> { "Powered by Google Gemini" }
+                        Sources = new List<string> { "" }
                     };
                 }
 
